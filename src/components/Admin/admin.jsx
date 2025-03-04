@@ -18,7 +18,7 @@ const Admin = () => {
     const [locations, setLocations] = useState([]);
 
     useEffect(() => {
-        axios.get(`${import.meta.VITE_BACKEND_URL}/admin/locations`)
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/locations`)
             .then(response => setLocations(response.data))
             .catch(error => console.log(error));
     }, []);

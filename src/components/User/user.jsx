@@ -31,7 +31,7 @@ const User = () => {
         }
 
         try {
-            const response = await axios.post(`${import.meta.VITE_BACKEND_URL}/user/locations`, { name, lat, lng });
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/locations`, { name, lat, lng });
             console.log("Location added:", response.data);
             alert("Location added successfully!");
             setName(""); 
