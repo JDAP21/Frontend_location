@@ -5,13 +5,15 @@ import User from './components/User/user';
 import "./App.css";
 
 function App() {
-  return (
+  return (<>
+  <h1>Hello</h1>
     <BrowserRouter>
       <Routes>
         <Route path="/user" element={<User />} />
         <Route path="/admin" element={<Admin />} />
       </Routes>
     </BrowserRouter>
+    </>
   );
 }
 
