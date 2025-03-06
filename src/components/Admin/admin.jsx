@@ -1,61 +1,18 @@
-// import React, { useEffect, useState } from "react";
-// import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-// import "leaflet/dist/leaflet.css";
-// import axios from "axios";
-
-// const FitBounds = ({ locations }) => {
-//     const map = useMap();
-//     useEffect(() => {
-//         if (locations.length > 0) {
-//             const bounds = locations.map(loc => [loc.lat, loc.lng]);
-//             map.fitBounds(bounds);
-//         }
-//     }, [locations, map]);
-//     return null;
-// };
-
-// const Admin = () => {
-//     const [locations, setLocations] = useState([]);
-
-//     useEffect(() => {
-//         axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/locations`)
-//             .then(response => setLocations(response.data))
-//             .catch(error => console.log(error));
-//     }, []);
-
-//     return (
-//         <div style={{ height: "100vh", width: "100%" }}>
-//             <MapContainer center={[23.0225, 72.5714]} zoom={12} style={{ height: "100%", width: "100%" }}>
-//                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-//                 <FitBounds locations={locations} />
-//                 {locations.map((location) => (
-//                     <Marker key={location._id} position={[location.lat, location.lng]}>
-//                         <Popup>{location.name}</Popup>
-//                     </Marker>
-//                 ))}
-//             </MapContainer>
-//         </div>
-//     );
-// };
-
-// export default Admin;
-
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import L from "leaflet";
 
-// Fix missing marker icon issue
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
 const customIcon = new L.Icon({
     iconUrl: markerIcon,
     shadowUrl: markerShadow,
-    iconSize: [25, 41], // Default Leaflet icon size
-    iconAnchor: [12, 41], // Anchor point of the icon
-    popupAnchor: [1, -34], // Popup anchor point
+    iconSize: [25, 41], 
+    iconAnchor: [12, 41], 
+    popupAnchor: [1, -34], 
 });
 
 const FitBounds = ({ locations }) => {
