@@ -9,7 +9,7 @@ const mapContainerStyle = {
 
 const defaultCenter = { lat: 23.0225, lng: 72.5714 }; // Ahmedabad example
 
-const Map = () => {
+const Map = ({ showUserLocation = true }) => {
     const [locations, setLocations] = useState([]);
     const [userLocation, setUserLocation] = useState(null);
     const [destination, setDestination] = useState(null);
@@ -22,8 +22,8 @@ const Map = () => {
             .then(response => setLocations(response.data))
             .catch(error => console.log(error));
 
-        // Get user's current location
-        if (navigator.geolocation) {
+        // Get user's current location if showUserLocation is true
+        if (showUserLocation && navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     setUserLocation({
@@ -34,7 +34,7 @@ const Map = () => {
                 (error) => console.log("Error getting location:", error)
             );
         }
-    }, []);
+    }, [showUserLocation]);
 
     useEffect(() => {
         if (userLocation && destination) {
@@ -59,7 +59,7 @@ const Map = () => {
     return (
         <LoadScript googleMapsApiKey={mapApi}>
             <GoogleMap mapContainerStyle={mapContainerStyle} center={defaultCenter} zoom={12}>
-                {userLocation && (
+                {showUserLocation && userLocation && (
                     <Marker position={userLocation} label="You" />
                 )}
 
