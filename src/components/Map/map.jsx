@@ -14,6 +14,7 @@ const Map = () => {
     const [userLocation, setUserLocation] = useState(null);
     const [destination, setDestination] = useState(null);
     const [directions, setDirections] = useState(null);
+    const mapApi = import.meta.env.VITE_MAP_API_KEY;
 
     useEffect(() => {
         // Fetch locations from API
@@ -56,7 +57,7 @@ const Map = () => {
     }, [userLocation, destination]);
 
     return (
-        <LoadScript googleMapsApiKey={import.meta.env.VITE_MAP_API_KEY}>
+        <LoadScript googleMapsApiKey={mapApi}>
             <GoogleMap mapContainerStyle={mapContainerStyle} center={defaultCenter} zoom={12}>
                 {userLocation && (
                     <Marker position={userLocation} label="You" />
