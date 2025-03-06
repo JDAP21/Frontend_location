@@ -12,6 +12,7 @@ const defaultCenter = { lat: 23.0225, lng: 72.5714 }; // Default location (Ahmed
 const Admin = () => {
     const [locations, setLocations] = useState([]);
     const [selectedLocation, setSelectedLocation] = useState(null);
+    const mapapi = import.meta.env.VITE_MAP_API_KEY;
 
     useEffect(() => {
         axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/locations`)
@@ -20,7 +21,9 @@ const Admin = () => {
     }, []);
 
     return (
-        <LoadScript googleMapsApiKey="AIzaSyDDaB-THb5qnTSJfbaVCwEu6QJ2fc3-WVI">
+        // <LoadScript googleMapsApiKey=(`${mapapi}`)>
+        <LoadScript googleMapsApiKey={mapapi}>
+
             <GoogleMap mapContainerStyle={mapContainerStyle} center={defaultCenter} zoom={12}>
                 {locations.map((location) => (
                     <Marker 
