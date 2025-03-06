@@ -1,33 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
+import { GoogleMap, LoadScript, Marker, InfoWindow } from "@react-google-maps/api";
 import axios from "axios";
-import L from "leaflet";
 
-import markerIcon from "leaflet/dist/images/marker-icon.png";
-import markerShadow from "leaflet/dist/images/marker-shadow.png";
-
-const customIcon = new L.Icon({
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow,
-    iconSize: [25, 41], 
-    iconAnchor: [12, 41], 
-    popupAnchor: [1, -34], 
-});
-
-const FitBounds = ({ locations }) => {
-    const map = useMap();
-    useEffect(() => {
-        if (locations.length > 0) {
-            const bounds = locations.map(loc => [loc.lat, loc.lng]);
-            map.fitBounds(bounds);
-        }
-    }, [locations, map]);
-    return null;
+const mapContainerStyle = {
+    width: "100%",
+    height: "100vh",
 };
+
+const defaultCenter = { lat: 23.0225, lng: 72.5714 }; // Default location (Ahmedabad example)
 
 const Admin = () => {
     const [locations, setLocations] = useState([]);
+    const [selectedLocation, setSelectedLocation] = useState(null);
 
     useEffect(() => {
         axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/locations`)
@@ -36,25 +20,32 @@ const Admin = () => {
     }, []);
 
     return (
-        <div style={{ height: "100vh", width: "100%" }}>
-            <MapContainer center={[23.0225, 72.5714]} zoom={12} style={{ height: "100%", width: "100%" }}>
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                <FitBounds locations={locations} />
+        <LoadScript googleMapsApiKey="AIzaSyDDaB-THb5qnTSJfbaVCwEu6QJ2fc3-WVI">
+            <GoogleMap mapContainerStyle={mapContainerStyle} center={defaultCenter} zoom={12}>
                 {locations.map((location) => (
-                    <Marker key={location._id} position={[location.lat, location.lng]} icon={customIcon}>
-                        <Popup>{location.name}</Popup>
-                    </Marker>
+                    <Marker 
+                        key={location._id} 
+                        position={{ lat: location.lat, lng: location.lng }}
+                        onClick={() => setSelectedLocation(location)}
+                    />
                 ))}
-            </MapContainer>
-        </div>
+
+                {selectedLocation && (
+                    <InfoWindow 
+                        position={{ lat: selectedLocation.lat, lng: selectedLocation.lng }}
+                        onCloseClick={() => setSelectedLocation(null)}
+                    >
+                        <div>
+                            <h4>{selectedLocation.name}</h4>
+                        </div>
+                    </InfoWindow>
+                )}
+            </GoogleMap>
+        </LoadScript>
     );
 };
 
 export default Admin;
-
-
-
-
 
 
 
