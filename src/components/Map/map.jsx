@@ -71,7 +71,7 @@ const Map = () => {
                 {userLocation && (
                     <Marker 
                         position={userLocation} 
-                        label="You"
+                        // label="You"
                         icon={{
                             url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
                         }}
