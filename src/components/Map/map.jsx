@@ -22,17 +22,21 @@ const Map = () => {
             .then(response => setLocations(response.data))
             .catch(error => console.log(error));
 
-        // Get user's current location
+        // Watch user's live location
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
+            const watchId = navigator.geolocation.watchPosition(
                 (position) => {
                     setUserLocation({
                         lat: position.coords.latitude,
                         lng: position.coords.longitude,
                     });
                 },
-                (error) => console.log("Error getting location:", error)
+                (error) => console.log("Error getting location:", error),
+                { enableHighAccuracy: true, maximumAge: 1000 }
             );
+
+            // Cleanup function to stop tracking when component unmounts
+            return () => navigator.geolocation.clearWatch(watchId);
         }
     }, []);
 
@@ -58,11 +62,23 @@ const Map = () => {
 
     return (
         <LoadScript googleMapsApiKey={mapApi}>
-            <GoogleMap mapContainerStyle={mapContainerStyle} center={defaultCenter} zoom={12}>
+            <GoogleMap 
+                mapContainerStyle={mapContainerStyle} 
+                center={userLocation || defaultCenter} // Center on user's location
+                zoom={14}
+            >
+                {/* Show live user location */}
                 {userLocation && (
-                    <Marker position={userLocation} label="You" />
+                    <Marker 
+                        position={userLocation} 
+                        label="You"
+                        icon={{
+                            url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
+                        }}
+                    />
                 )}
 
+                {/* Show saved locations */}
                 {locations.map((location) => (
                     <Marker
                         key={location._id}
@@ -71,6 +87,7 @@ const Map = () => {
                     />
                 ))}
 
+                {/* Show route if a destination is selected */}
                 {directions && <DirectionsRenderer directions={directions} />}
             </GoogleMap>
         </LoadScript>
