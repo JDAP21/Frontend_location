@@ -65,7 +65,7 @@ import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 
 // Custom icon for stored locations
 const locationIcon = new L.Icon({
-    iconUrl: "https://www.citypng.com/public/uploads/preview/red-gps-location-symbol-icon-hd-png-701751695035446zkphf8tfr3.png",
+    iconUrl: "https://w7.pngwing.com/pngs/760/399/png-transparent-map-computer-icons-flat-design-location-logo-location-icon-photography-heart-logo.png",
     iconSize: [40, 40],  
     iconAnchor: [20, 40], 
     popupAnchor: [0, -40], 
