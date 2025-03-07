@@ -20,11 +20,12 @@ const Map = () => {
         // Fetch locations from API
         axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/locations`)
             .then(response => setLocations(response.data))
-            .catch(error => console.log(error));
+            .catch(error => console.log("Error fetching locations:", error));
 
         // Watch user's live location
+        let watchId;
         if (navigator.geolocation) {
-            const watchId = navigator.geolocation.watchPosition(
+            watchId = navigator.geolocation.watchPosition(
                 (position) => {
                     setUserLocation({
                         lat: position.coords.latitude,
@@ -34,14 +35,21 @@ const Map = () => {
                 (error) => console.log("Error getting location:", error),
                 { enableHighAccuracy: true, maximumAge: 1000 }
             );
-
-            // Cleanup function to stop tracking when component unmounts
-            return () => navigator.geolocation.clearWatch(watchId);
         }
+
+        // Cleanup function to stop tracking when component unmounts
+        return () => {
+            if (watchId) navigator.geolocation.clearWatch(watchId);
+        };
     }, []);
 
     useEffect(() => {
         if (userLocation && destination) {
+            if (!window.google || !window.google.maps) {
+                console.error("Google Maps API is not loaded yet.");
+                return;
+            }
+
             const directionsService = new window.google.maps.DirectionsService();
             directionsService.route(
                 {
@@ -62,16 +70,15 @@ const Map = () => {
 
     return (
         <LoadScript googleMapsApiKey={mapApi}>
-            <GoogleMap 
-                mapContainerStyle={mapContainerStyle} 
+            <GoogleMap
+                mapContainerStyle={mapContainerStyle}
                 center={userLocation || defaultCenter} // Center on user's location
                 zoom={14}
             >
                 {/* Show live user location */}
                 {userLocation && (
-                    <Marker 
-                        position={userLocation} 
-                        // label="You"
+                    <Marker
+                        position={userLocation}
                         icon={{
                             url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png",
                         }}
