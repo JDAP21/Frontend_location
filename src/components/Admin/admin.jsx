@@ -49,6 +49,7 @@
 // };
 
 // export default Admin;
+
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -65,7 +66,7 @@ const FitBounds = ({ locations }) => {
     return null;
 };
 
-const Map = () => {
+const Admin = () => {
     const [locations, setLocations] = useState([]);
 
     useEffect(() => {
@@ -89,7 +90,7 @@ const Map = () => {
     );
 };
 
-export default Map;
+export default Admin;
 
 
 
