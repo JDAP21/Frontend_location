@@ -1,54 +1,95 @@
+// import React, { useEffect, useState } from "react";
+// import { GoogleMap, LoadScript, Marker, InfoWindow } from "@react-google-maps/api";
+// import axios from "axios";
+
+// const mapContainerStyle = {
+//     width: "100%",
+//     height: "100vh",
+// };
+
+// const defaultCenter = { lat: 23.0225, lng: 72.5714 }; // Default location (Ahmedabad example)
+
+// const Admin = () => {
+//     const [locations, setLocations] = useState([]);
+//     const [selectedLocation, setSelectedLocation] = useState(null);
+//     const mapapi = import.meta.env.VITE_MAP_API_KEY;
+
+//     useEffect(() => {
+//         axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/locations`)
+//             .then(response => setLocations(response.data))
+//             .catch(error => console.log(error));
+//     }, []);
+
+//     return (
+//         // <LoadScript googleMapsApiKey=(`${mapapi}`)>
+//         <LoadScript googleMapsApiKey={mapapi}>
+
+//             <GoogleMap mapContainerStyle={mapContainerStyle} center={defaultCenter} zoom={12}>
+//                 {locations.map((location) => (
+//                     <Marker 
+//                         key={location._id} 
+//                         position={{ lat: location.lat, lng: location.lng }}
+//                         onClick={() => setSelectedLocation(location)}
+//                     />
+//                 ))}
+
+//                 {selectedLocation && (
+//                     <InfoWindow 
+//                         position={{ lat: selectedLocation.lat, lng: selectedLocation.lng }}
+//                         onCloseClick={() => setSelectedLocation(null)}
+//                     >
+//                         <div>
+//                             <h4>{selectedLocation.name}</h4>
+//                         </div>
+//                     </InfoWindow>
+//                 )}
+//             </GoogleMap>
+//         </LoadScript>
+//     );
+// };
+
+// export default Admin;
 import React, { useEffect, useState } from "react";
-import { GoogleMap, LoadScript, Marker, InfoWindow } from "@react-google-maps/api";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 import axios from "axios";
 
-const mapContainerStyle = {
-    width: "100%",
-    height: "100vh",
+const FitBounds = ({ locations }) => {
+    const map = useMap();
+    useEffect(() => {
+        if (locations.length > 0) {
+            const bounds = locations.map(loc => [loc.lat, loc.lng]);
+            map.fitBounds(bounds);
+        }
+    }, [locations, map]);
+    return null;
 };
 
-const defaultCenter = { lat: 23.0225, lng: 72.5714 }; // Default location (Ahmedabad example)
-
-const Admin = () => {
+const Map = () => {
     const [locations, setLocations] = useState([]);
-    const [selectedLocation, setSelectedLocation] = useState(null);
-    const mapapi = import.meta.env.VITE_MAP_API_KEY;
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}/admin/locations`)
+        axios.get("http://localhost:4000/api/v1/message/locations")
             .then(response => setLocations(response.data))
             .catch(error => console.log(error));
     }, []);
 
     return (
-        // <LoadScript googleMapsApiKey=(`${mapapi}`)>
-        <LoadScript googleMapsApiKey={mapapi}>
-
-            <GoogleMap mapContainerStyle={mapContainerStyle} center={defaultCenter} zoom={12}>
+        <div style={{ height: "100vh", width: "100%" }}>
+            <MapContainer center={[23.0225, 72.5714]} zoom={12} style={{ height: "100%", width: "100%" }}>
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <FitBounds locations={locations} />
                 {locations.map((location) => (
-                    <Marker 
-                        key={location._id} 
-                        position={{ lat: location.lat, lng: location.lng }}
-                        onClick={() => setSelectedLocation(location)}
-                    />
+                    <Marker key={location._id} position={[location.lat, location.lng]}>
+                        <Popup>{location.name}</Popup>
+                    </Marker>
                 ))}
-
-                {selectedLocation && (
-                    <InfoWindow 
-                        position={{ lat: selectedLocation.lat, lng: selectedLocation.lng }}
-                        onCloseClick={() => setSelectedLocation(null)}
-                    >
-                        <div>
-                            <h4>{selectedLocation.name}</h4>
-                        </div>
-                    </InfoWindow>
-                )}
-            </GoogleMap>
-        </LoadScript>
+            </MapContainer>
+        </div>
     );
 };
 
-export default Admin;
+export default Map;
 
 
 
