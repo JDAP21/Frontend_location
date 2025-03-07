@@ -59,7 +59,7 @@ import L from "leaflet";
 
 // Custom location icon
 const locationIcon = new L.Icon({
-    iconUrl: "/location-icon.png", // Replace with the actual path to your location icon
+    iconUrl: "../../assets/images/location-icon.png", // Replace with the actual path to your location icon
     iconSize: [30, 40],
     iconAnchor: [15, 40],
     popupAnchor: [0, -40],
@@ -122,7 +122,7 @@ const Admin = () => {
                 {/* Show user’s live location */}
                 {userLocation && (
                     <Marker position={[userLocation.lat, userLocation.lng]} icon={locationIcon}>
-                        <Popup>📍 My Current Location</Popup>
+                        <Popup>My Current Location</Popup>
                     </Marker>
                 )}
 
