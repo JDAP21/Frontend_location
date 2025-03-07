@@ -69,7 +69,7 @@ const locationIcon = new L.Icon({
 
 // Custom icon for user’s current location
 const userLocationIcon = new L.Icon({
-    iconUrl: "https://e7.pngegg.com/pngimages/599/258/png-clipart-computer-icons-location-symbol-blue-symbol-miscellaneous-blue-thumbnail.png",
+    iconUrl: "https://www.iconpacks.net/icons/2/free-location-icon-2955-thumb.png",
     iconSize: [40, 40],  
     iconAnchor: [20, 40], 
     popupAnchor: [0, -40], 
