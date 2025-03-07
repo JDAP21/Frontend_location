@@ -49,7 +49,6 @@
 // };
 
 // export default Admin;
-
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
@@ -66,11 +65,15 @@ const FitBounds = ({ locations }) => {
     return null;
 };
 
+// Load API keys from environment variables
+const MAP_API_KEY = import.meta.env.VITE_MAP_API_KEY;
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+
 const Admin = () => {
     const [locations, setLocations] = useState([]);
 
     useEffect(() => {
-        axios.get("http://localhost:4000/api/v1/message/locations")
+        axios.get(`${BACKEND_URL}/admin/locations`)
             .then(response => setLocations(response.data))
             .catch(error => console.log(error));
     }, []);
@@ -78,7 +81,9 @@ const Admin = () => {
     return (
         <div style={{ height: "100vh", width: "100%" }}>
             <MapContainer center={[23.0225, 72.5714]} zoom={12} style={{ height: "100%", width: "100%" }}>
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <TileLayer 
+                    url={`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`} 
+                />
                 <FitBounds locations={locations} />
                 {locations.map((location) => (
                     <Marker key={location._id} position={[location.lat, location.lng]}>
