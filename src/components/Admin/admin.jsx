@@ -50,18 +50,29 @@
 
 // export default Admin;
 
+
+
+s
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import L from "leaflet";
 
-// Custom location icon
+// Custom icon for stored locations
 const locationIcon = new L.Icon({
     iconUrl: "https://png.pngtree.com/png-vector/20230413/ourmid/pngtree-3d-location-icon-clipart-in-transparent-background-vector-png-image_6704161.png",
-    iconSize: [40, 40],  // Adjust icon size
-    iconAnchor: [20, 40], // Anchor point at bottom center
-    popupAnchor: [0, -40], // Offset popup above icon
+    iconSize: [40, 40],  
+    iconAnchor: [20, 40], 
+    popupAnchor: [0, -40], 
+});
+
+// Custom icon for user’s current location
+const userLocationIcon = new L.Icon({
+    iconUrl: "https://e7.pngegg.com/pngimages/599/258/png-clipart-computer-icons-location-symbol-blue-symbol-miscellaneous-blue-thumbnail.png",
+    iconSize: [40, 40],  
+    iconAnchor: [20, 40], 
+    popupAnchor: [0, -40], 
 });
 
 // Fit map to include all markers
@@ -120,8 +131,8 @@ const Admin = () => {
 
                 {/* Show user’s live location */}
                 {userLocation && (
-                    <Marker position={[userLocation.lat, userLocation.lng]} icon={locationIcon}>
-                        <Popup>📍 My Current Location</Popup>
+                    <Marker position={[userLocation.lat, userLocation.lng]} icon={userLocationIcon}>
+                        <Popup>My Current Location</Popup>
                     </Marker>
                 )}
 
@@ -137,6 +148,7 @@ const Admin = () => {
 };
 
 export default Admin;
+
 
 
 
