@@ -65,7 +65,7 @@ import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 
 // Custom icon for stored locations
 const locationIcon = new L.Icon({
-    iconUrl: "https://png.pngtree.com/png-vector/20230413/ourmid/pngtree-3d-location-icon-clipart-in-transparent-background-vector-png-image_6704161.png",
+    iconUrl: "https://www.citypng.com/public/uploads/preview/red-gps-location-symbol-icon-hd-png-701751695035446zkphf8tfr3.png",
     iconSize: [40, 40],  
     iconAnchor: [20, 40], 
     popupAnchor: [0, -40], 
@@ -115,7 +115,7 @@ const RouteLayer = ({ userLocation, destination }) => {
             show: true,
             createMarker: () => null, // Hide default markers
             lineOptions: {
-                styles: [{ color: "blue", weight: 6, opacity: 0.7 }], // Change route color to blue
+                styles: [{ color: "blue", weight: 4, opacity: 0.7 }], // Change route color to blue
             },
         }).addTo(map);
 
