@@ -114,6 +114,9 @@ const RouteLayer = ({ userLocation, destination }) => {
             routeWhileDragging: true,
             show: true,
             createMarker: () => null, // Hide default markers
+            lineOptions: {
+                styles: [{ color: "blue", weight: 6, opacity: 0.7 }], // Change route color to blue
+            },
         }).addTo(map);
 
         return () => {
