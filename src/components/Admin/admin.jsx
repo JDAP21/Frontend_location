@@ -49,11 +49,23 @@
 // };
 
 // export default Admin;
+
+
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
+import L from "leaflet";
 
+// Custom location icon
+const locationIcon = new L.Icon({
+    iconUrl: "/location-icon.png", // Replace with your actual icon path
+    iconSize: [30, 40],
+    iconAnchor: [15, 40],
+    popupAnchor: [0, -40],
+});
+
+// Fit map to bounds
 const FitBounds = ({ locations }) => {
     const map = useMap();
     useEffect(() => {
@@ -66,37 +78,76 @@ const FitBounds = ({ locations }) => {
 };
 
 // Load API keys from environment variables
-const MAP_API_KEY = import.meta.env.VITE_MAP_API_KEY;
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Admin = () => {
     const [locations, setLocations] = useState([]);
+    const [userLocation, setUserLocation] = useState(null);
 
+    // Fetch stored locations from API
     useEffect(() => {
         axios.get(`${BACKEND_URL}/admin/locations`)
             .then(response => setLocations(response.data))
             .catch(error => console.log(error));
     }, []);
 
+    // Get user's current location
+    const getUserLocation = () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setUserLocation({ lat: latitude, lng: longitude });
+
+                    // Save user location to database
+                    axios.post(`${BACKEND_URL}/admin/locations`, {
+                        name: "My Current Location",
+                        lat: latitude,
+                        lng: longitude
+                    })
+                    .then(response => {
+                        setLocations([...locations, response.data]);
+                    })
+                    .catch(error => console.error("Error saving location:", error));
+                },
+                (error) => {
+                    console.error("Error getting location:", error);
+                }
+            );
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    };
+
     return (
         <div style={{ height: "100vh", width: "100%" }}>
+            <button onClick={getUserLocation} style={{ position: "absolute", zIndex: 1000, padding: "10px", background: "#007bff", color: "#fff", border: "none", borderRadius: "5px", cursor: "pointer" }}>
+                📍 Get My Location
+            </button>
+
             <MapContainer center={[23.0225, 72.5714]} zoom={12} style={{ height: "100%", width: "100%" }}>
-                <TileLayer 
-                    url={`https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png`} 
-                />
-                <FitBounds locations={locations} />
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <FitBounds locations={[...locations, userLocation].filter(Boolean)} />
+
+                {/* Render stored locations */}
                 {locations.map((location) => (
-                    <Marker key={location._id} position={[location.lat, location.lng]}>
+                    <Marker key={location._id} position={[location.lat, location.lng]} icon={locationIcon}>
                         <Popup>{location.name}</Popup>
                     </Marker>
                 ))}
+
+                {/* Render user location if available */}
+                {userLocation && (
+                    <Marker position={[userLocation.lat, userLocation.lng]} icon={locationIcon}>
+                        <Popup>My Current Location</Popup>
+                    </Marker>
+                )}
             </MapContainer>
         </div>
     );
 };
 
 export default Admin;
-
 
 
 
