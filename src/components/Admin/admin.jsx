@@ -53,11 +53,15 @@
 
 
 
+
+
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import L from "leaflet";
+import "leaflet-routing-machine";
+import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 
 // Custom icon for stored locations
 const locationIcon = new L.Icon({
@@ -87,12 +91,46 @@ const FitBounds = ({ locations }) => {
     return null;
 };
 
+// Component to handle routing
+const RouteLayer = ({ userLocation, destination }) => {
+    const map = useMap();
+
+    useEffect(() => {
+        if (!userLocation || !destination) return;
+
+        // Remove existing routes before adding a new one
+        map.eachLayer(layer => {
+            if (layer instanceof L.Routing.Control) {
+                map.removeLayer(layer);
+            }
+        });
+
+        // Create and add the route
+        const routingControl = L.Routing.control({
+            waypoints: [
+                L.latLng(userLocation.lat, userLocation.lng),
+                L.latLng(destination.lat, destination.lng),
+            ],
+            routeWhileDragging: true,
+            show: true,
+            createMarker: () => null, // Hide default markers
+        }).addTo(map);
+
+        return () => {
+            map.removeControl(routingControl);
+        };
+    }, [userLocation, destination, map]);
+
+    return null;
+};
+
 // Load API keys from environment variables
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 const Admin = () => {
     const [locations, setLocations] = useState([]);
     const [userLocation, setUserLocation] = useState(null);
+    const [destination, setDestination] = useState(null); // Store selected destination
 
     // Fetch stored locations from API
     useEffect(() => {
@@ -129,7 +167,7 @@ const Admin = () => {
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <FitBounds locations={[...locations, userLocation].filter(Boolean)} />
 
-                {/* Show user’s live location */}
+                {/* Show user's live location */}
                 {userLocation && (
                     <Marker position={[userLocation.lat, userLocation.lng]} icon={userLocationIcon}>
                         <Popup>My Current Location</Popup>
@@ -138,16 +176,29 @@ const Admin = () => {
 
                 {/* Show stored locations */}
                 {locations.map((location) => (
-                    <Marker key={location._id} position={[location.lat, location.lng]} icon={locationIcon}>
+                    <Marker 
+                        key={location._id} 
+                        position={[location.lat, location.lng]} 
+                        icon={locationIcon}
+                        eventHandlers={{
+                            click: () => setDestination(location) // Set destination on click
+                        }}
+                    >
                         <Popup>{location.name}</Popup>
                     </Marker>
                 ))}
+
+                {/* Display route when a destination is selected */}
+                {userLocation && destination && (
+                    <RouteLayer userLocation={userLocation} destination={destination} />
+                )}
             </MapContainer>
         </div>
     );
 };
 
 export default Admin;
+
 
 
 
